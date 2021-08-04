@@ -56,8 +56,16 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="Tables" />
+    <Folder Include="Tables\dbo" />
+    <Folder Include="Programmability" />
+    <Folder Include="Programmability\Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Publish.xml" />
+    <None Include="SrcDB.Publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\dbo\StaticTable.sql" />
+    <Build Include="Programmability\Stored Procedures\PopulateStaticTable.sql" />
   </ItemGroup>
 </Project>
