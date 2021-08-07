@@ -69,7 +69,6 @@
   <ItemGroup>
     <None Include="DWH_DB.publish.xml" />
     <Build Include="Schemas\Extract.sql" />
-    <None Include="Scripts\GenerateExtractSQLFiles.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Schemas\DWH.sql" />
