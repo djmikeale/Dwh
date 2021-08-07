@@ -62,9 +62,18 @@
     <Folder Include="Programmability" />
     <Folder Include="Scripts" />
     <Folder Include="Schemas" />
+    <Folder Include="Scripts\Data" />
+    <Folder Include="Tables\DWH" />
+    <Folder Include="Tables\Extract" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DWH_DB.publish.xml" />
     <Build Include="Schemas\Extract.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Schemas\DWH.sql" />
+    <Build Include="Scripts\Data\DWHColumnData.sql" />
+    <Build Include="Tables\DWH\DWHColumns.sql" />
+    <PostDeploy Include="Programmability\PostDeployment.sql" />
   </ItemGroup>
 </Project>
