@@ -60,12 +60,15 @@
     <Folder Include="Tables\dbo" />
     <Folder Include="Programmability" />
     <Folder Include="Programmability\Stored Procedures" />
+    <Folder Include="Deployment" />
+    <Folder Include="Deployment\PostDeployment" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SrcDB.Publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\dbo\StaticTable.sql" />
+    <PostDeploy Include="Deployment\PostDeployment.sql" />
     <Build Include="Programmability\Stored Procedures\PopulateStaticTable.sql" />
   </ItemGroup>
 </Project>

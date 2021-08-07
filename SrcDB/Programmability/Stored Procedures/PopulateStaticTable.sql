@@ -1,6 +1,9 @@
-﻿CREATE PROCEDURE [dbo].[PopulateStaticTable]
-	@param1 int = 0,
-	@param2 int
+﻿CREATE PROCEDURE [dbo].[PopulateStaticTableExample]
+
 AS
-	SELECT @param1, @param2
-RETURN 0
+SET NOCOUNT ON;
+IF NOT EXISTS (SELECT 1 FROM [dbo].[StaticTableExample])
+BEGIN
+	INSERT INTO [dbo].[StaticTableExample] VALUES (1,NULL,42)
+END
+GO
