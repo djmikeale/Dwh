@@ -11,20 +11,129 @@
   DTS:LocaleID="1030"
   DTS:ObjectName="GenerateExtractSqlFiles"
   DTS:PackageType="5"
-  DTS:VersionBuild="17"
-  DTS:VersionGUID="{A22B2290-EF10-4602-8C86-A5D2B9747765}">
+  DTS:VersionBuild="28"
+  DTS:VersionGUID="{D0199446-7181-4015-A8AC-A80D4D24B510}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[FileWriter]"
+      DTS:CreationName="FLATFILE"
+      DTS:DTSID="{4DF37F3A-86B0-42E7-BFD1-1C6F2FB8558C}"
+      DTS:ObjectName="FileWriter">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[$Package::FileWriter_ConnectionString]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Format="Delimited"
+          DTS:LocaleID="1030"
+          DTS:HeaderRowDelimiter="_x000D__x000A_"
+          DTS:ColumnNamesInFirstDataRow="True"
+          DTS:RowDelimiter=""
+          DTS:TextQualifier="_x003C_none_x003E_"
+          DTS:CodePage="1252"
+          DTS:ConnectionString="C:\Users\mht\Source\Repos\Dwh\DWH_DB\Tables\Extract\Address.sql">
+          <DTS:FlatFileColumns>
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName=""
+              DTS:DTSID="{345D9449-90C6-40D3-833E-719037075F5A}"
+              DTS:CreationName="" />
+          </DTS:FlatFileColumns>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{1A32CCAA-E9BC-4381-89D3-9F2393198411}"
+      DTS:ObjectName="FileWriter_ConnectionString">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">C:\Users\mht\Source\Repos\Dwh\DWH_DB\Tables\Extract\Address.sql</DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
   <DTS:Variables>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{8750E59B-FE79-4AF2-89E2-541A2BEE2A0D}"
+      DTS:DTSID="{73C2BEE0-95AB-4FCC-A579-3BC193708C85}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
-      DTS:ObjectName="RawFileName">
+      DTS:ObjectName="RawFileDestination">
       <DTS:VariableValue
-        DTS:DataType="8"
-        xml:space="preserve"></DTS:VariableValue>
+        DTS:DataType="8">C:\Users\mht\Source\Repos\Dwh\DWH_DB\Tables\Extract\</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{8750E59B-FE79-4AF2-89E2-541A2BEE2A0D}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="@[User::RawFileDestination] +  @[User::Temp_TableName] + &quot;.sql&quot;"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="RawFileDestinationAndName">
+      <DTS:VariableValue
+        DTS:DataType="8">C:\Users\mht\Source\Repos\Dwh\DWH_DB\Tables\Extract\Address.sql</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{8607D895-3C92-4078-8B85-3C26134BB352}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="&quot;WITH CTE AS &#xA;(&#xA;SELECT &#xA;      'Extract' AS DstSchema&#xA;&#x9;  ,[TableName]&#xA;      , (SELECT '[' + ColumnName + '] ' + UPPER(DataType) + ' ' + IsNullable + CASE WHEN ColProperty = '' THEN ', ' ELSE ' ' + ColProperty + ', ' END&#xA;        FROM [DWH].[DWHColumns] AS innerTbl&#xA;        WHERE innerTbl.[TableName] = tbl.[TableName] OR TableName = ''&#xA;        FOR XML PATH(''))&#xA;    AS cols&#xA;  FROM [DWH].[DWHColumns] AS Tbl&#xA;  WHERE TableName = '&quot; + @[User::Temp_TableName] + &quot;'&#xA;  GROUP BY TableName&#xA;&#xA;&#xA;)&#xA;&#xA;SELECT CAST('CREATE TABLE [Extract].[' + TableName + + '] (' + cols + 'CONSTRAINT [PK_' + DstSchema + '_' + TableName + '] PRIMARY KEY CLUSTERED ([DWH_ID] ASC))' AS nvarchar(max)) AS QueryContent FROM CTE&quot;"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="TableDDL">
+      <DTS:VariableValue
+        DTS:DataType="8">WITH CTE AS 
+(
+SELECT 
+      'Extract' AS DstSchema
+	  ,[TableName]
+      , (SELECT '[' + ColumnName + '] ' + UPPER(DataType) + ' ' + IsNullable + CASE WHEN ColProperty = '' THEN ', ' ELSE ' ' + ColProperty + ', ' END
+        FROM [DWH].[DWHColumns] AS innerTbl
+        WHERE innerTbl.[TableName] = tbl.[TableName] OR TableName = ''
+        FOR XML PATH(''))
+    AS cols
+  FROM [DWH].[DWHColumns] AS Tbl
+  WHERE TableName = 'Address'
+  GROUP BY TableName
+
+
+)
+
+SELECT CAST('CREATE TABLE [Extract].[' + TableName + + '] (' + cols + 'CONSTRAINT [PK_' + DstSchema + '_' + TableName + '] PRIMARY KEY CLUSTERED ([DWH_ID] ASC))' AS nvarchar(max)) AS QueryContent FROM CTE</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{D9469C87-A5CE-4DB5-914C-2C22B576F229}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="TableName">
+      <DTS:VariableValue
+        DTS:DataSubType="ManagedSerializable"
+        DTS:DataType="13">
+        <SOAP-ENV:Envelope xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <SOAP-ENV:Body>
+            <xsd:anyType
+              id="ref-1"></xsd:anyType>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+      </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{32410B8C-8C95-423D-ADB5-5D4E25EE6B60}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="Temp_TableName">
+      <DTS:VariableValue
+        DTS:DataType="8">Address</DTS:VariableValue>
     </DTS:Variable>
   </DTS:Variables>
   <DTS:Executables>
@@ -254,7 +363,7 @@ SELECT
 	COLUMN_NAME AS ColumnName, 
 	CASE DATA_TYPE
 		WHEN 'nchar' THEN DATA_TYPE + '(' + CAST(CHARACTER_MAXIMUM_LENGTH AS nvarchar) + ')'
-		WHEN 'nvarchar' THEN DATA_TYPE + '(' + CAST(CHARACTER_MAXIMUM_LENGTH AS nvarchar) + ')'
+		WHEN 'nvarchar' THEN DATA_TYPE + '(' + REPLACE(CAST(CHARACTER_MAXIMUM_LENGTH AS nvarchar),'-1','max') + ')'
 		WHEN 'decimal' THEN DATA_TYPE + '(' + CAST(NUMERIC_PRECISION AS nvarchar) + ',' + CAST(NUMERIC_SCALE AS nvarchar) + ')'
 		WHEN 'datetime2' THEN DATA_TYPE + '(' + CAST(DATETIME_PRECISION AS nvarchar) + ')'
 		ELSE DATA_TYPE /* Surely this will fail at some point but I'll fix that when it breaks lol -- SELECT * FROM sys.types could be useful */ 
@@ -262,8 +371,6 @@ SELECT
 	CASE WHEN IS_NULLABLE = 'YES' THEN N'NULL' ELSE N'NOT NULL' END AS IsNullable,
 	N'' AS ColProperty
 FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_SCHEMA = 'dbo'
-AND TABLE_NAME = 'StaticTableExample'
 )
 SELECT *
      FROM InputColumns</property>
@@ -292,8 +399,8 @@ SELECT *
               <connections>
                 <connection
                   refId="Package\DFT generate list of tables\OLE DB Source.Connections[OleDbConnection]"
-                  connectionManagerID="{AA3858C2-CC89-4269-BCC8-967D076B7E2B}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[LocalHost.SrcDB]"
+                  connectionManagerID="{76A3F165-C82A-428F-BBD8-0932BC2B7531}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[LocalHost.AdventureWorks2012]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -383,7 +490,7 @@ SELECT *
                     <externalMetadataColumn
                       refId="Package\DFT generate list of tables\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[DataType]"
                       dataType="wstr"
-                      length="191"
+                      length="4000"
                       name="DataType" />
                     <externalMetadataColumn
                       refId="Package\DFT generate list of tables\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[IsNullable]"
@@ -423,7 +530,7 @@ SELECT *
                     <outputColumn
                       refId="Package\DFT generate list of tables\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[DataType]"
                       dataType="wstr"
-                      length="191"
+                      length="4000"
                       lineageId="Package\DFT generate list of tables\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[DataType]"
                       name="DataType" />
                     <outputColumn
@@ -467,287 +574,13 @@ SELECT *
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
-      DTS:refId="Package\DFT write to file"
-      DTS:CreationName="Microsoft.Pipeline"
-      DTS:Description="Data Flow Task"
-      DTS:DTSID="{D35FD5B1-A4C1-4058-B587-CE82A8B8E0AF}"
-      DTS:ExecutableType="Microsoft.Pipeline"
-      DTS:LocaleID="-1"
-      DTS:ObjectName="DFT write to file"
-      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
-      <DTS:Variables />
-      <DTS:ObjectData>
-        <pipeline
-          version="1">
-          <components>
-            <component
-              refId="Package\DFT write to file\Data Conversion"
-              componentClassID="Microsoft.DataConvert"
-              contactInfo="Data Conversion;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
-              description="Data Conversion"
-              name="Data Conversion"
-              usesDispositions="true">
-              <inputs>
-                <input
-                  refId="Package\DFT write to file\Data Conversion.Inputs[Data Conversion Input]"
-                  name="Data Conversion Input">
-                  <inputColumns>
-                    <inputColumn
-                      refId="Package\DFT write to file\Data Conversion.Inputs[Data Conversion Input].Columns[QueryContent]"
-                      cachedDataType="nText"
-                      cachedName="QueryContent"
-                      lineageId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Output].Columns[QueryContent]" />
-                  </inputColumns>
-                  <externalMetadataColumns />
-                </input>
-              </inputs>
-              <outputs>
-                <output
-                  refId="Package\DFT write to file\Data Conversion.Outputs[Data Conversion Output]"
-                  exclusionGroup="1"
-                  name="Data Conversion Output"
-                  synchronousInputId="Package\DFT write to file\Data Conversion.Inputs[Data Conversion Input]">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\DFT write to file\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of QueryContent]"
-                      dataType="wstr"
-                      errorOrTruncationOperation="Conversion"
-                      errorRowDisposition="FailComponent"
-                      length="1000"
-                      lineageId="Package\DFT write to file\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of QueryContent]"
-                      name="Copy of QueryContent"
-                      truncationRowDisposition="FailComponent">
-                      <properties>
-                        <property
-                          containsID="true"
-                          dataType="System.Int32"
-                          description="Specifies the input column used as the source of data for the conversion."
-                          name="SourceInputColumnLineageID">#{Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Output].Columns[QueryContent]}</property>
-                        <property
-                          dataType="System.Boolean"
-                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
-                          name="FastParse">false</property>
-                      </properties>
-                    </outputColumn>
-                  </outputColumns>
-                  <externalMetadataColumns />
-                </output>
-                <output
-                  refId="Package\DFT write to file\Data Conversion.Outputs[Data Conversion Error Output]"
-                  exclusionGroup="1"
-                  isErrorOut="true"
-                  name="Data Conversion Error Output"
-                  synchronousInputId="Package\DFT write to file\Data Conversion.Inputs[Data Conversion Input]">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\DFT write to file\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
-                      dataType="i4"
-                      lineageId="Package\DFT write to file\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
-                      name="ErrorCode"
-                      specialFlags="1" />
-                    <outputColumn
-                      refId="Package\DFT write to file\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
-                      dataType="i4"
-                      lineageId="Package\DFT write to file\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
-                      name="ErrorColumn"
-                      specialFlags="2" />
-                  </outputColumns>
-                  <externalMetadataColumns />
-                </output>
-              </outputs>
-            </component>
-            <component
-              refId="Package\DFT write to file\OLE DB Source"
-              componentClassID="Microsoft.OLEDBSource"
-              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
-              description="OLE DB Source"
-              name="OLE DB Source"
-              usesDispositions="true"
-              version="7">
-              <properties>
-                <property
-                  dataType="System.Int32"
-                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
-                  name="CommandTimeout">0</property>
-                <property
-                  dataType="System.String"
-                  description="Specifies the name of the database object used to open a rowset."
-                  name="OpenRowset"></property>
-                <property
-                  dataType="System.String"
-                  description="Specifies the variable that contains the name of the database object used to open a rowset."
-                  name="OpenRowsetVariable"></property>
-                <property
-                  dataType="System.String"
-                  description="The SQL command to be executed."
-                  name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">WITH CTE AS 
-(
-SELECT 
-      'Extract' AS DstSchema
-	  ,[TableName]
-      , (SELECT '[' + ColumnName + '] ' + UPPER(DataType) + ' ' + IsNullable + CASE WHEN ColProperty = '' THEN ', ' ELSE ' ' + ColProperty + ', ' END
-        FROM [DWH].[DWHColumns] AS innerTbl
-        WHERE innerTbl.[TableName] = tbl.[TableName] OR TableName = ''
-        FOR XML PATH(''))
-    AS cols
-  FROM [DWH].[DWHColumns] AS Tbl
-  WHERE TableName = 'StaticTableExample'
-  GROUP BY TableName
-
-
-)
-
-SELECT CAST('CREATE TABLE [Extract].[' + TableName + + '] (' + cols + 'CONSTRAINT [PK_' + DstSchema + '_' + TableName + '] PRIMARY KEY CLUSTERED ([DWH_ID] ASC))' AS nvarchar(max)) AS QueryContent FROM CTE</property>
-                <property
-                  dataType="System.String"
-                  description="The variable that contains the SQL command to be executed."
-                  name="SqlCommandVariable"></property>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies the column code page to use when code page information is unavailable from the data source."
-                  name="DefaultCodePage">1252</property>
-                <property
-                  dataType="System.Boolean"
-                  description="Forces the use of the DefaultCodePage property value when describing character data."
-                  name="AlwaysUseDefaultCodePage">false</property>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies the mode used to access the database."
-                  name="AccessMode"
-                  typeConverter="AccessMode">2</property>
-                <property
-                  dataType="System.String"
-                  description="The mappings between the parameters in the SQL command and variables."
-                  name="ParameterMapping"></property>
-              </properties>
-              <connections>
-                <connection
-                  refId="Package\DFT write to file\OLE DB Source.Connections[OleDbConnection]"
-                  connectionManagerID="{982F97A6-1601-423A-9AE8-F4390B6EA047}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[LocalHost.DWH]"
-                  description="The OLE DB runtime connection used to access the database."
-                  name="OleDbConnection" />
-              </connections>
-              <outputs>
-                <output
-                  refId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Output]"
-                  name="OLE DB Source Output">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Output].Columns[QueryContent]"
-                      dataType="nText"
-                      errorOrTruncationOperation="Conversion"
-                      errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[QueryContent]"
-                      lineageId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Output].Columns[QueryContent]"
-                      name="QueryContent"
-                      truncationRowDisposition="FailComponent" />
-                  </outputColumns>
-                  <externalMetadataColumns
-                    isUsed="True">
-                    <externalMetadataColumn
-                      refId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[QueryContent]"
-                      dataType="nText"
-                      name="QueryContent" />
-                  </externalMetadataColumns>
-                </output>
-                <output
-                  refId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Error Output]"
-                  isErrorOut="true"
-                  name="OLE DB Source Error Output">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[QueryContent]"
-                      dataType="nText"
-                      lineageId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[QueryContent]"
-                      name="QueryContent" />
-                    <outputColumn
-                      refId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
-                      dataType="i4"
-                      lineageId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
-                      name="ErrorCode"
-                      specialFlags="1" />
-                    <outputColumn
-                      refId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
-                      dataType="i4"
-                      lineageId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
-                      name="ErrorColumn"
-                      specialFlags="2" />
-                  </outputColumns>
-                  <externalMetadataColumns />
-                </output>
-              </outputs>
-            </component>
-            <component
-              refId="Package\DFT write to file\Raw File Destination"
-              componentClassID="Microsoft.RawDestination"
-              contactInfo="Writes raw data that will not require parsing or translation. For example, allow packages to run faster by reading from a local raw file instead of a slow source or manually distribute data for parallel processing on multiple computers.;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;2"
-              description="Writes raw data that will not require parsing or translation. For example, allow packages to run faster by reading from a local raw file instead of a slow source or manually distribute data for parallel processing on multiple computers."
-              name="Raw File Destination"
-              version="2">
-              <properties>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies the mode used to access the file."
-                  name="AccessMode"
-                  typeConverter="AccessMode">0</property>
-                <property
-                  dataType="System.String"
-                  description="Output file name"
-                  name="FileName"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.NonValidatingFileNameEditor">C:\Users\mht\Source\Repos\Dwh\DWH_DB\Tables\Extract\1.sql</property>
-                <property
-                  dataType="System.Null"
-                  description="Name of the variable that contains the file name"
-                  name="FileNameVariable" />
-                <property
-                  dataType="System.Int32"
-                  description="Indicates what option is used to write to the file."
-                  name="WriteOption"
-                  typeConverter="WriteOption">0</property>
-              </properties>
-              <inputs>
-                <input
-                  refId="Package\DFT write to file\Raw File Destination.Inputs[Raw File Destination Input]"
-                  hasSideEffects="true"
-                  name="Raw File Destination Input">
-                  <inputColumns>
-                    <inputColumn
-                      refId="Package\DFT write to file\Raw File Destination.Inputs[Raw File Destination Input].Columns[Copy of QueryContent]"
-                      cachedDataType="wstr"
-                      cachedLength="1000"
-                      cachedName="Copy of QueryContent"
-                      lineageId="Package\DFT write to file\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of QueryContent]" />
-                  </inputColumns>
-                  <externalMetadataColumns />
-                </input>
-              </inputs>
-            </component>
-          </components>
-          <paths>
-            <path
-              refId="Package\DFT write to file.Paths[Data Conversion Output]"
-              endId="Package\DFT write to file\Raw File Destination.Inputs[Raw File Destination Input]"
-              name="Data Conversion Output"
-              startId="Package\DFT write to file\Data Conversion.Outputs[Data Conversion Output]" />
-            <path
-              refId="Package\DFT write to file.Paths[OLE DB Source Output]"
-              endId="Package\DFT write to file\Data Conversion.Inputs[Data Conversion Input]"
-              name="OLE DB Source Output"
-              startId="Package\DFT write to file\OLE DB Source.Outputs[OLE DB Source Output]" />
-          </paths>
-        </pipeline>
-      </DTS:ObjectData>
-    </DTS:Executable>
-    <DTS:Executable
-      DTS:refId="Package\Execute SQL Task"
+      DTS:refId="Package\Generate DWH columns"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
       DTS:DTSID="{9DDD5559-EEDB-4817-9C65-FD5A4E650564}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
-      DTS:ObjectName="Execute SQL Task"
+      DTS:ObjectName="Generate DWH columns"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
       DTS:ThreadHint="0">
       <DTS:Variables />
@@ -760,18 +593,10 @@ SELECT CAST('CREATE TABLE [Extract].[' + TableName + + '] (' + cols + 'CONSTRAIN
   </DTS:Executables>
   <DTS:PrecedenceConstraints>
     <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[Constraint]"
-      DTS:CreationName=""
-      DTS:DTSID="{2909B40D-9C73-4591-899E-21998DFC1A32}"
-      DTS:From="Package\DFT generate list of tables"
-      DTS:LogicalAnd="True"
-      DTS:ObjectName="Constraint"
-      DTS:To="Package\DFT write to file" />
-    <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
       DTS:CreationName=""
       DTS:DTSID="{8A8D9A6D-DF3E-48FB-9D40-C6A48C6D031E}"
-      DTS:From="Package\Execute SQL Task"
+      DTS:From="Package\Generate DWH columns"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 1"
       DTS:To="Package\DFT generate list of tables" />
@@ -787,55 +612,41 @@ SELECT CAST('CREATE TABLE [Extract].[' + TableName + + '] (' + cols + 'CONSTRAIN
     design-time-name="Package">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="208,42"
           Id="Package\DFT generate list of tables"
           TopLeft="314,164" />
         <NodeLayout
-          Size="156,42"
-          Id="Package\DFT write to file"
-          TopLeft="346,254" />
-        <NodeLayout
-          Size="170,42"
-          Id="Package\Execute SQL Task"
+          Size="198,42"
+          Id="Package\Generate DWH columns"
           TopLeft="335,69" />
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="421,206">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,48"
-              Start="0,0"
-              End="0,40.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,40.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="419,111">
+          TopLeft="434,111">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,53"
+              EndConnector="-16,53"
               Start="0,0"
-              End="0,45.5">
+              End="-16,45.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,45.5" />
+                    End="0,22.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,22.5"
+                    Point2="0,26.5"
+                    Point3="-4,26.5" />
+                  <mssgle:LineSegment
+                    End="-12,26.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-12,26.5"
+                    Point2="-16,26.5"
+                    Point3="-16,30.5" />
+                  <mssgle:LineSegment
+                    End="-16,45.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -853,13 +664,13 @@ SELECT CAST('CREATE TABLE [Extract].[' + TableName + + '] (' + cols + 'CONSTRAIN
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="177,42"
-          Id="Package\DFT generate list of tables\OLE DB Destination"
-          TopLeft="493,226" />
-        <NodeLayout
           Size="157,42"
           Id="Package\DFT generate list of tables\OLE DB Source"
           TopLeft="576,140" />
+        <NodeLayout
+          Size="177,42"
+          Id="Package\DFT generate list of tables\OLE DB Destination"
+          TopLeft="493,226" />
         <EdgeLayout
           Id="Package\DFT generate list of tables.Paths[OLE DB Source Output]"
           TopLeft="654.5,182">
@@ -912,102 +723,6 @@ SELECT CAST('CREATE TABLE [Extract].[' + TableName + + '] (' + cols + 'CONSTRAIN
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
     design-time-name="Package\DFT generate list of tables\OLE DB Source">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <TaskHost
-    design-time-name="Package\DFT write to file">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="157,42"
-          Id="Package\DFT write to file\OLE DB Source"
-          TopLeft="356,166" />
-        <NodeLayout
-          Size="180,42"
-          Id="Package\DFT write to file\Raw File Destination"
-          TopLeft="385,393" />
-        <NodeLayout
-          Size="161,42"
-          Id="Package\DFT write to file\Data Conversion"
-          TopLeft="282,284" />
-        <EdgeLayout
-          Id="Package\DFT write to file.Paths[OLE DB Source Output]"
-          TopLeft="434.5,208">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="-72,76"
-              Start="0,0"
-              End="-72,68.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,34" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,34"
-                    Point2="0,38"
-                    Point3="-4,38" />
-                  <mssgle:LineSegment
-                    End="-68,38" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-68,38"
-                    Point2="-72,38"
-                    Point3="-72,42" />
-                  <mssgle:LineSegment
-                    End="-72,68.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\DFT write to file.Paths[Data Conversion Output]"
-          TopLeft="362.5,326">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="112.5,67"
-              Start="0,0"
-              End="112.5,59.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,29.5" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,29.5"
-                    Point2="0,33.5"
-                    Point3="4,33.5" />
-                  <mssgle:LineSegment
-                    End="108.5,33.5" />
-                  <mssgle:CubicBezierSegment
-                    Point1="108.5,33.5"
-                    Point2="112.5,33.5"
-                    Point3="112.5,37.5" />
-                  <mssgle:LineSegment
-                    End="112.5,59.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </TaskHost>
-  <PipelineComponentMetadata
-    design-time-name="Package\DFT write to file\OLE DB Source">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
