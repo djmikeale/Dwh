@@ -5,14 +5,15 @@
   DTS:CreationName="Microsoft.Package"
   DTS:CreatorComputerName="PC0PLK0P"
   DTS:CreatorName="NCLAN\mht"
+  DTS:Description="See &quot;\Dwh\Utility\GenerateSQLTables.xlsm&quot; for usage of this package"
   DTS:DTSID="{1E23E273-C151-4B6B-AB43-9EEFFFCE86A2}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:LastModifiedProductVersion="15.0.2000.167"
   DTS:LocaleID="1030"
   DTS:ObjectName="GenerateExtractSqlFiles"
   DTS:PackageType="5"
-  DTS:VersionBuild="28"
-  DTS:VersionGUID="{D0199446-7181-4015-A8AC-A80D4D24B510}">
+  DTS:VersionBuild="30"
+  DTS:VersionGUID="{067C2A6D-F24E-4D1D-87D3-39F584B59518}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>

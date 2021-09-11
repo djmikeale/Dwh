@@ -65,6 +65,7 @@
     <Folder Include="Scripts\Data" />
     <Folder Include="Tables\DWH" />
     <Folder Include="Tables\Extract" />
+    <Folder Include="Programmability\Procedures" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DWH_DB.publish.xml" />
@@ -75,5 +76,7 @@
     <Build Include="Scripts\Data\DWHColumnData.sql" />
     <Build Include="Tables\DWH\DWHColumns.sql" />
     <PostDeploy Include="Programmability\PostDeployment.sql" />
+    <Build Include="Tables\DWH\ObjectDescriptions.sql" />
+    <Build Include="Programmability\Procedures\AddOrModifyObjectDescriptions.sql" />
   </ItemGroup>
 </Project>
